@@ -1,11 +1,24 @@
 extern crate csv;
+extern crate serde;
+mod write;
+
 use std::{collections::HashMap, env, error::Error, ffi::OsString, fs::File, io, process};
-// This introduces a type alias so that we can conveniently reference our
-// record type.
-type Record = HashMap<String, String>;
+
+use serde_derive::Deserialize;
+use write::runWrite;
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+struct Record {
+    latitude: f64,
+    longitude: f64,
+    population: Option<u64>,
+    city: String,
+    state: String,
+}
 
 fn main() {
-    if let Err(err) = run() {
+    if let Err(err) = runWrite() {
         println!("Error: {}", err);
         process::exit(1);
     }
